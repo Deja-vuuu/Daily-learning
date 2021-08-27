@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        img {
+            width: 100px;
+            height: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="my-canvas"></canvas>
+    <img src="../source/demo.jpg" alt="">
+</body>
+<script>
+    window.onload = function () {
+        // 显示孙悟空
+        let canvas2 = document.getElementById("my-canvas");
+        let ctx2 = canvas2.getContext("2d");
+
+        var image2 = new Image();
+        const scale = 0.08
+        image2.src = "../source/demo.jpg";
+        image2.width = 4684 * scale;
+        image2.height = 10142 * scale;
+
+        image2.onload = function () {
+            console.log('image2', image2);
+
+            canvas2.width = image2.width;
+            canvas2.height = image2.height;
+            ctx2.drawImage(image2, 0, 0, image2.width, image2.height);
+            console.log('ctx2', ctx2);
+
+            var imageData2 = ctx2.getImageData(0, 0, image2.width, image2.height).data;
+            console.log('imageData2', imageData2);
+
+            // 将画布背景图黑
+            ctx2.fillStyle = "#000";
+            ctx2.fillRect(0, 0, image2.width, image2.height);
+            var gap = 3
+            for (var h = 0; h < image2.height; h += gap) {
+                for (var w = 0; w < image2.width; w += gap) {
+                    var position = (image2.width * h + w) * 4;
+                    console.log('p', image2.width, h, w, position);
+
+                    var r = imageData2[position], g = imageData2[position + 1], b = imageData2[position + 2];
+                    // 因为我用的原图背景不是纯黑的，所以我直接筛除rgb相加小于165的点（为什么是165呢，因为600是整数，255 * 3 - 600 = 165）
+                    if (765 - (r + g + b) < 600) {
+                        ctx2.fillStyle = `rgb(${r}, ${g}, ${b})`;
+                        ctx2.fillRect(w, h, gap, gap);
+                    }
+                }
+            }
+
+        }
+
+    }
+
+</script>
+
+</html>
